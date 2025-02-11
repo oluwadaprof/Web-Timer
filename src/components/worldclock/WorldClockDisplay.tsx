@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import {
   searchCities,
   getAllCities,
-  type City,
-  useCityStore,
   updateCityTimes,
+  useCityStore,
+  type City,
 } from "@/lib/cities";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";

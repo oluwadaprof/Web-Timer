@@ -1,6 +1,6 @@
-const { create } = require("zustand");
+import { create } from "zustand";
 
-type City = {
+export type City = {
   id: string;
   name: string;
   timezone: string;
@@ -21,7 +21,7 @@ type CityStore = {
   updateCityTime: (cityId: string, time: string) => void;
 };
 
-const useCityStore = create<CityStore>((set) => ({
+export const useCityStore = create<CityStore>((set) => ({
   cities: [],
   favorites: [],
   setCities: (cities) =>
@@ -68,7 +68,6 @@ async function getCityData(query?: string) {
         countryCode: city.countryCode,
       }));
     } else {
-      // Get a selection of major cities from different timezones
       const uniqueTimezones = new Set();
       const majorCities = [];
 
@@ -92,7 +91,7 @@ async function getCityData(query?: string) {
   }
 }
 
-async function getCountryData(countryCode) {
+async function getCountryData(countryCode: string) {
   try {
     const response = await fetch(
       `https://restcountries.com/v3.1/alpha/${countryCode}`,
@@ -130,7 +129,7 @@ async function getWeatherData(city: string, countryCode: string) {
   }
 }
 
-const getAllCities = async () => {
+export const getAllCities = async () => {
   const cityData = await getCityData();
   const cities = await Promise.all(
     cityData.map(async (city, index) => {
@@ -161,7 +160,7 @@ const getAllCities = async () => {
   return cities;
 };
 
-const searchCities = async (query) => {
+export const searchCities = async (query: string) => {
   if (!query) return [];
 
   const cityData = await getCityData(query);
@@ -194,7 +193,7 @@ const searchCities = async (query) => {
   return cities;
 };
 
-const updateCityTimes = (cities) => {
+export const updateCityTimes = (cities: City[]) => {
   const store = useCityStore.getState();
 
   cities.forEach((city) => {
@@ -205,12 +204,4 @@ const updateCityTimes = (cities) => {
     });
     store.updateCityTime(city.id, localTime);
   });
-};
-
-module.exports = {
-  City: null,
-  useCityStore,
-  getAllCities,
-  searchCities,
-  updateCityTimes,
 };
