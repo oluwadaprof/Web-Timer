@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Button } from "./ui/button";
 import { Maximize2, Timer, Clock, Bell, Globe } from "lucide-react";
+import { motion } from "framer-motion";
 import { Card } from "./ui/card";
 import TimerDisplay from "./timer/TimerDisplay";
 import WorldClockDisplay from "./worldclock/WorldClockDisplay";
@@ -10,8 +11,23 @@ interface TimerTabsProps {
   defaultTab?: string;
 }
 
+const shakeAnimation = {
+  shake: {
+    x: [0, -5, 5, -5, 5, 0],
+    transition: {
+      duration: 0.5,
+      repeat: Infinity,
+      repeatType: "loop" as const,
+    },
+  },
+  stop: {
+    x: 0,
+  },
+};
+
 const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
   const [activeTab, setActiveTab] = useState(defaultTab);
+  const [timeLeft, setTimeLeft] = useState(300);
 
   return (
     <div className="w-full h-screen bg-[#2A2E37] overflow-hidden">
@@ -29,12 +45,21 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
                   color: white !important;
                 }
               `}</style>
-              <TabsTrigger
-                value="timer"
-                className="flex items-center gap-2 rounded-full px-6 py-2 bg-[#3A3F4B] text-white hover:bg-[#4A4F5B]"
+              <motion.div
+                animate={
+                  activeTab === "timer" && timeLeft < 60 && timeLeft > 0
+                    ? "shake"
+                    : "stop"
+                }
+                variants={shakeAnimation}
               >
-                <Timer className="h-4 w-4" /> Timer
-              </TabsTrigger>
+                <TabsTrigger
+                  value="timer"
+                  className={`flex items-center gap-2 rounded-full px-6 py-2 ${timeLeft < 60 && timeLeft > 0 ? "bg-red-500 hover:bg-red-600" : "bg-[#3A3F4B] hover:bg-[#4A4F5B]"} text-white`}
+                >
+                  <Timer className="h-4 w-4" /> Timer
+                </TabsTrigger>
+              </motion.div>
               <TabsTrigger
                 value="stopwatch"
                 className="flex items-center gap-2 rounded-full px-6 py-2 bg-[#3A3F4B] text-white hover:bg-[#4A4F5B]"
@@ -72,7 +97,7 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
 
           <TabsContent value="timer" className="mt-4">
             <div className="flex justify-center">
-              <TimerDisplay />
+              <TimerDisplay onTimeChange={(time) => setTimeLeft(time)} />
             </div>
           </TabsContent>
 
