@@ -254,45 +254,73 @@ const WebTrackDisplay = ({ defaultTab = "summary" }: WebTrackDisplayProps) => {
 
       {/* Right Column - Statistics */}
       <div className="w-[400px] ml-6">
-        <Card className="bg-[#3A3F4B] border-0 p-6 h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
+        <Card className="bg-[#3A3F4B] border-0 p-6 h-[calc(100vh-138px)] overflow-y-auto custom-scrollbar">
           <Tabs
             defaultValue={selectedTab}
             onValueChange={setSelectedTab}
             className="w-full"
           >
             <TabsList className="grid w-full grid-cols-4 bg-[#2A2E37]">
-              <TabsTrigger value="summary" className="text-white">
+              <TabsTrigger
+                value="summary"
+                className="text-white data-[state=active]:bg-[#4A4F5B]"
+              >
                 Summary
               </TabsTrigger>
-              <TabsTrigger value="apps" className="text-white">
+              <TabsTrigger
+                value="apps"
+                className="text-white data-[state=active]:bg-[#4A4F5B]"
+              >
                 Apps
               </TabsTrigger>
-              <TabsTrigger value="windows" className="text-white">
+              <TabsTrigger
+                value="windows"
+                className="text-white data-[state=active]:bg-[#4A4F5B]"
+              >
                 Windows
               </TabsTrigger>
-              <TabsTrigger value="domains" className="text-white">
+              <TabsTrigger
+                value="domains"
+                className="text-white data-[state=active]:bg-[#4A4F5B]"
+              >
                 Domains
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="summary" className="mt-6">
-              <h3 className="text-lg font-medium mb-4">Top Applications</h3>
-              <ActivityList data={topApplications} />
+              <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
+                <h3 className="text-lg font-medium mb-4 text-slate-200">
+                  Top Applications
+                </h3>
+                <ActivityList data={topApplications} />
+              </div>
             </TabsContent>
 
             <TabsContent value="apps" className="mt-6">
-              <h3 className="text-lg font-medium mb-4">Applications</h3>
-              <ActivityList data={topApplications} />
+              <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
+                <h3 className="text-lg font-medium mb-4 text-slate-200">
+                  Applications
+                </h3>
+                <ActivityList data={topApplications} />
+              </div>
             </TabsContent>
 
             <TabsContent value="windows" className="mt-6">
-              <h3 className="text-lg font-medium mb-4">Window Titles</h3>
-              <ActivityList data={topWindows} />
+              <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
+                <h3 className="text-lg font-medium mb-4 text-slate-200">
+                  Window Titles
+                </h3>
+                <ActivityList data={topWindows} />
+              </div>
             </TabsContent>
 
             <TabsContent value="domains" className="mt-6">
-              <h3 className="text-lg font-medium mb-4">Browser Domains</h3>
-              <ActivityList data={topDomains} />
+              <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
+                <h3 className="text-lg font-medium mb-4 text-slate-200">
+                  Browser Domains
+                </h3>
+                <ActivityList data={topDomains} />
+              </div>
             </TabsContent>
           </Tabs>
 
