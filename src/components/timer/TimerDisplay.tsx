@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
-
 import { Play, Pause, RotateCcw, Plus, Minus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { trackTimerCompletion } from "@/lib/activity";
 
 interface TimerDisplayProps {
   initialTime?: number; // in seconds
@@ -44,6 +44,7 @@ const TimerDisplay = ({
           if (newTime === 0) {
             setIsRunning(false);
             onComplete();
+            trackTimerCompletion(initialTime, true);
           }
           return newTime;
         });
@@ -66,6 +67,15 @@ const TimerDisplay = ({
     const newTime = Math.max(0, timeLeft + amount);
     setTimeLeft(newTime);
     setProgress(((initialTime - newTime) / initialTime) * 100);
+  };
+
+  const handleReset = () => {
+    if (isRunning) {
+      trackTimerCompletion(timeLeft, false);
+    }
+    setTimeLeft(initialTime);
+    setProgress(0);
+    setIsRunning(false);
   };
 
   return (
@@ -132,10 +142,7 @@ const TimerDisplay = ({
           variant="ghost"
           size="icon"
           className="text-white hover:bg-[#3A3F4B] w-12 h-12"
-          onClick={() => {
-            setTimeLeft(initialTime);
-            setProgress(0);
-          }}
+          onClick={handleReset}
         >
           <RotateCcw className="h-6 w-6" />
         </Button>
@@ -146,10 +153,7 @@ const TimerDisplay = ({
         {timeLeft === 0 ? (
           <Button
             className="w-[600px] h-14 bg-[#7B89F4] hover:bg-[#8B99FF] text-white gap-2 rounded-full text-lg font-medium"
-            onClick={() => {
-              setTimeLeft(initialTime);
-              setProgress(0);
-            }}
+            onClick={handleReset}
           >
             <RotateCcw className="h-5 w-5" />
             Reset

@@ -39,6 +39,7 @@ const StopwatchDisplay = () => {
 
   const handleReset = () => {
     setIsRunning(false);
+    trackStopwatchSession(time, laps.length);
     setTime(0);
     setLaps([]);
     setLastLapTime(0);

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import { Maximize2, Timer, Clock, Bell, Globe, BarChart2 } from "lucide-react";
+import { UserAvatar } from "@/components/auth/UserAvatar";
 import StopwatchDisplay from "./stopwatch/StopwatchDisplay";
 import { motion } from "framer-motion";
 import { Card } from "./ui/card";
@@ -87,20 +88,23 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
                 <BarChart2 className="h-4 w-4" /> Web Track
               </TabsTrigger>
             </TabsList>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-[#3A3F4B]"
-              onClick={() => {
-                if (!document.fullscreenElement) {
-                  document.documentElement.requestFullscreen();
-                } else {
-                  document.exitFullscreen();
-                }
-              }}
-            >
-              <Maximize2 className="h-6 w-6" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-[#3A3F4B]"
+                onClick={() => {
+                  if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                  } else {
+                    document.exitFullscreen();
+                  }
+                }}
+              >
+                <Maximize2 className="h-6 w-6" />
+              </Button>
+              <UserAvatar />
+            </div>
           </div>
 
           <TabsContent value="timer" className="mt-4">

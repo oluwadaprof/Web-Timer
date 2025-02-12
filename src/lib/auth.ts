@@ -19,7 +19,12 @@ export const useAuthStore = create<AuthStore>((set) => ({
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo:
+            "https://peaceful-mestorf8-gtxcd.dev-2.tempolabs.ai/auth/callback",
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
         },
       });
       if (error) throw error;

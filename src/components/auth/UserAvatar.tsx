@@ -37,7 +37,8 @@ export const UserAvatar = () => {
           <Avatar className="h-8 w-8">
             <AvatarImage src={user.user_metadata.avatar_url} />
             <AvatarFallback>
-              {user.email?.charAt(0).toUpperCase()}
+              {user.user_metadata.full_name?.charAt(0).toUpperCase() ||
+                user.email?.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -47,7 +48,7 @@ export const UserAvatar = () => {
         className="w-56 bg-[#2A2E37] text-white border-[#3A3F4B]"
       >
         <DropdownMenuItem className="text-sm cursor-pointer hover:bg-[#3A3F4B]">
-          {user.email}
+          {user.user_metadata.full_name || user.email}
         </DropdownMenuItem>
         <DropdownMenuItem
           className="text-sm cursor-pointer hover:bg-[#3A3F4B] text-red-400"
