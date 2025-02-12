@@ -23,21 +23,69 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { ActivityTabs } from "./components/ActivityTabs";
+import { format, addDays } from "date-fns";
 import { ActivityChart } from "./components/ActivityChart";
-import { TabContent } from "./components/TabContent";
 import { EmptyState } from "./components/EmptyState";
 import { UserAvatar } from "@/components/auth/UserAvatar";
 import { useAuthStore } from "@/lib/auth";
-import { topApplications, topWindows, topDomains } from "./data/mockData";
-import type { WebTrackDisplayProps } from "./types";
+import { Card } from "@/components/ui/card";
+import { supabase } from "@/lib/supabase";
 
-const WebTrackDisplay = ({ defaultTab = "summary" }: WebTrackDisplayProps) => {
+const WebTrackDisplay = ({ defaultTab = "summary" }) => {
   const { user } = useAuthStore();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTab, setSelectedTab] = useState(defaultTab);
-  const [hasData, setHasData] = useState(false); // TODO: Replace with actual data check
+  const [hasData, setHasData] = useState(false);
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchActivities = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("activities")
+          .select("*")
+          .eq("user_id", user.id)
+          .gte("start_time", format(selectedDate, "yyyy-MM-dd"))
+          .lt("start_time", format(addDays(selectedDate, 1), "yyyy-MM-dd"))
+          .order("start_time", { ascending: false });
+
+        if (error) throw error;
+        setActivities(data || []);
+        setHasData(data && data.length > 0);
+      } catch (error) {
+        console.error("Error fetching activities:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Initial fetch
+    fetchActivities();
+
+    // Set up real-time subscription
+    const subscription = supabase
+      .channel("activities")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "activities",
+          filter: `user_id=eq.${user.id}`,
+        },
+        (payload) => {
+          fetchActivities(); // Refetch on any change
+        },
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [user, selectedDate]);
 
   if (!user) {
     return (
@@ -103,141 +151,171 @@ const WebTrackDisplay = ({ defaultTab = "summary" }: WebTrackDisplayProps) => {
             </PopoverContent>
           </Popover>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-[#3A3F4B]"
-          >
-            <Settings2 className="h-6 w-6" />
-          </Button>
-          <UserAvatar />
-        </div>
       </div>
 
-      <div className="bg-[#3A3F4B] rounded-lg p-6 h-[calc(100vh-200px)]">
-        <div className="flex items-center gap-2 mb-6">
-          <BarChart className="h-5 w-5 text-[#7B89F4]" />
-          <h2 className="text-lg font-medium">Activity Overview</h2>
+      <div className="flex gap-6">
+        <div className="flex-1 bg-[#3A3F4B] rounded-lg p-6 h-[calc(100vh-200px)]">
+          <div className="flex items-center gap-2 mb-6">
+            <BarChart className="h-5 w-5 text-[#7B89F4]" />
+            <h2 className="text-lg font-medium">Activity Overview</h2>
+          </div>
+
+          <ActivityChart />
+
+          {/* Analytics Grid */}
+          <div className="mt-14 grid grid-cols-3 gap-4">
+            {!hasData ? (
+              <div className="col-span-3">
+                <EmptyState
+                  title="No analytics data available"
+                  description="Your productivity metrics will appear here once you start using the browser extension."
+                />
+              </div>
+            ) : (
+              // Your existing analytics cards here
+              <div>Analytics cards will go here</div>
+            )}
+          </div>
         </div>
 
-        <ActivityChart />
+        {/* Right Column - Statistics */}
+        <div className="w-[400px]">
+          <Card className="bg-[#3A3F4B] border-0 p-6 h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
+            <Tabs
+              defaultValue={selectedTab}
+              onValueChange={setSelectedTab}
+              className="w-full"
+            >
+              <TabsList className="grid w-full grid-cols-4 bg-[#2A2E37]">
+                <TabsTrigger
+                  value="summary"
+                  className="text-white data-[state=active]:bg-[#4A4F5B]"
+                >
+                  Summary
+                </TabsTrigger>
+                <TabsTrigger
+                  value="apps"
+                  className="text-white data-[state=active]:bg-[#4A4F5B]"
+                >
+                  Apps
+                </TabsTrigger>
+                <TabsTrigger
+                  value="windows"
+                  className="text-white data-[state=active]:bg-[#4A4F5B]"
+                >
+                  Windows
+                </TabsTrigger>
+                <TabsTrigger
+                  value="domains"
+                  className="text-white data-[state=active]:bg-[#4A4F5B]"
+                >
+                  Domains
+                </TabsTrigger>
+              </TabsList>
 
-        {/* Analytics Grid */}
-        <div className="mt-14 grid grid-cols-3 gap-4">
-          {!hasData ? (
-            <div className="col-span-3">
-              <EmptyState
-                title="No analytics data available"
-                description="Your productivity metrics will appear here once you start using the browser extension."
-              />
+              <TabsContent value="summary">
+                {!hasData ? (
+                  <div className="mt-6 bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
+                    <EmptyState
+                      title="No summary data"
+                      description="Your summary statistics will appear here once tracking begins."
+                    />
+                  </div>
+                ) : (
+                  <div>Summary content will go here</div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="apps">
+                {!hasData ? (
+                  <div className="mt-6 bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
+                    <EmptyState
+                      title="No apps data"
+                      description="Your app statistics will appear here once tracking begins."
+                    />
+                  </div>
+                ) : (
+                  <div>Apps content will go here</div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="windows">
+                {!hasData ? (
+                  <div className="mt-6 bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
+                    <EmptyState
+                      title="No windows data"
+                      description="Your window statistics will appear here once tracking begins."
+                    />
+                  </div>
+                ) : (
+                  <div>Windows content will go here</div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="domains">
+                {!hasData ? (
+                  <div className="mt-6 bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
+                    <EmptyState
+                      title="No domains data"
+                      description="Your domain statistics will appear here once tracking begins."
+                    />
+                  </div>
+                ) : (
+                  <div>Domains content will go here</div>
+                )}
+              </TabsContent>
+            </Tabs>
+
+            {/* Recommended Activities */}
+            <div className="mt-6">
+              <h3 className="text-lg font-medium mb-4">
+                Recommended Focus Sessions
+              </h3>
+              {!hasData ? (
+                <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
+                  <EmptyState
+                    title="No recommendations yet"
+                    description="Focus session recommendations will appear here based on your activity patterns."
+                  />
+                </div>
+              ) : (
+                <div>Recommendations will go here</div>
+              )}
             </div>
-          ) : (
-            // Your existing analytics cards here
-            <div>Analytics cards will go here</div>
-          )}
+
+            {/* Productivity Goals */}
+            <div className="mt-6">
+              <h3 className="text-lg font-medium mb-4">Today's Goals</h3>
+              {!hasData ? (
+                <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
+                  <EmptyState
+                    title="No goals set"
+                    description="Your productivity goals and progress will appear here once you start setting targets."
+                  />
+                </div>
+              ) : (
+                <div>Goals will go here</div>
+              )}
+            </div>
+          </Card>
         </div>
       </div>
 
-      {/* Right Column - Statistics */}
-      <div className="w-[400px] ml-6">
-        <Card className="bg-[#3A3F4B] border-0 p-6 h-[calc(100vh-138px)] overflow-y-auto custom-scrollbar">
-          <Tabs
-            defaultValue={selectedTab}
-            onValueChange={setSelectedTab}
-            className="w-full"
-          >
-            <TabsList className="grid w-full grid-cols-4 bg-[#2A2E37]">
-              <TabsTrigger
-                value="summary"
-                className="text-white data-[state=active]:bg-[#4A4F5B]"
-              >
-                Summary
-              </TabsTrigger>
-              <TabsTrigger
-                value="apps"
-                className="text-white data-[state=active]:bg-[#4A4F5B]"
-              >
-                Apps
-              </TabsTrigger>
-              <TabsTrigger
-                value="windows"
-                className="text-white data-[state=active]:bg-[#4A4F5B]"
-              >
-                Windows
-              </TabsTrigger>
-              <TabsTrigger
-                value="domains"
-                className="text-white data-[state=active]:bg-[#4A4F5B]"
-              >
-                Domains
-              </TabsTrigger>
-            </TabsList>
-
-            {!hasData ? (
-              <div className="mt-6 bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
-                <EmptyState
-                  title={`No ${selectedTab} data`}
-                  description={`Your ${selectedTab} statistics will appear here once tracking begins.`}
-                />
-              </div>
-            ) : (
-              // Your existing tab content here
-              <div>Tab content will go here</div>
-            )}
-          </Tabs>
-
-          {/* Recommended Activities */}
-          <div className="mt-6">
-            <h3 className="text-lg font-medium mb-4">
-              Recommended Focus Sessions
-            </h3>
-            {!hasData ? (
-              <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
-                <EmptyState
-                  title="No recommendations yet"
-                  description="Focus session recommendations will appear here based on your activity patterns."
-                />
-              </div>
-            ) : (
-              // Your existing recommendations content here
-              <div>Recommendations will go here</div>
-            )}
-          </div>
-
-          {/* Productivity Goals */}
-          <div className="mt-6">
-            <h3 className="text-lg font-medium mb-4">Today's Goals</h3>
-            {!hasData ? (
-              <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
-                <EmptyState
-                  title="No goals set"
-                  description="Your productivity goals and progress will appear here once you start setting targets."
-                />
-              </div>
-            ) : (
-              // Your existing goals content here
-              <div>Goals will go here</div>
-            )}
-          </div>
-        </Card>
-      </div>
-
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #2a2e37;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #3a3f4b;
-          border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #4a4f5b;
-        }
-      `}</style>
+      <style>{`
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #2a2e37;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #3a3f4b;
+        border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #4a4f5b;
+      }
+    `}</style>
     </div>
   );
 };
