@@ -11,20 +11,6 @@ interface TimerDisplayProps {
   onTimeChange?: (time: number) => void;
 }
 
-const shakeAnimation = {
-  shake: {
-    x: [0, -10, 10, -10, 10, 0],
-    transition: {
-      duration: 0.5,
-      repeat: Infinity,
-      repeatType: "loop" as const,
-    },
-  },
-  stop: {
-    x: 0,
-  },
-};
-
 const TimerDisplay = ({
   initialTime = 300,
   onComplete = () => {},
@@ -80,7 +66,7 @@ const TimerDisplay = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-[calc(100vh-80px)] w-full bg-[#2A2E37] text-white relative">
+    <div className="flex flex-col items-center justify-center h-[calc(100vh-80px)] w-full bg-[#2A2E37] text-white relative px-4">
       {/* Timer Display */}
       <div className="flex justify-center -mt-10 h-[300px] relative">
         {/* Timer Text */}
@@ -90,7 +76,7 @@ const TimerDisplay = ({
             .map((digit, index) => (
               <motion.span
                 key={`${index}-${digit}`}
-                className={`text-[370px] font-normal tracking-wider inline-block w-[180px] text-center ${timeLeft < 60 ? "text-red-500" : "text-white"}`}
+                className={`text-[120px] sm:text-[200px] md:text-[300px] lg:text-[370px] font-normal tracking-wider inline-block w-[60px] sm:w-[100px] md:w-[140px] lg:w-[180px] text-center ${timeLeft < 60 ? "text-red-500" : "text-white"}`}
                 initial={{ y: -100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 100, opacity: 0 }}
@@ -103,7 +89,7 @@ const TimerDisplay = ({
       </div>
 
       {/* Quick Add Buttons Group */}
-      <div className="flex items-center justify-center gap-4 mb-6 mt-[15rem]">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 mt-[15rem]">
         <Button
           variant="ghost"
           size="icon"
@@ -153,7 +139,7 @@ const TimerDisplay = ({
       <div className="flex justify-center w-full px-6">
         {timeLeft === 0 ? (
           <Button
-            className="w-[600px] h-14 bg-[#7B89F4] hover:bg-[#8B99FF] text-white gap-2 rounded-full text-lg font-medium"
+            className="w-full max-w-[600px] h-14 bg-[#7B89F4] hover:bg-[#8B99FF] text-white gap-2 rounded-full text-lg font-medium"
             onClick={handleReset}
           >
             <RotateCcw className="h-5 w-5" />
@@ -161,7 +147,7 @@ const TimerDisplay = ({
           </Button>
         ) : (
           <Button
-            className="w-[600px] h-14 bg-[#7B89F4] hover:bg-[#8B99FF] text-white gap-2 rounded-full text-lg font-medium"
+            className="w-full max-w-[600px] h-14 bg-[#7B89F4] hover:bg-[#8B99FF] text-white gap-2 rounded-full text-lg font-medium"
             onClick={() => setIsRunning(!isRunning)}
           >
             {isRunning ? (

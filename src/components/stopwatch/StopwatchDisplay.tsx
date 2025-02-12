@@ -59,7 +59,7 @@ const StopwatchDisplay = () => {
   }, [time, lastLapTime]);
 
   return (
-    <div className="flex h-[calc(100vh-80px)] bg-[#2A2E37] text-white">
+    <div className="flex flex-col lg:flex-row h-[calc(100vh-80px)] bg-[#2A2E37] text-white">
       {/* Main Stopwatch Display */}
       <div className="flex-1 flex flex-col items-center justify-center p-8">
         <h2 className="text-2xl mb-4 tracking-wider">STOPWATCH</h2>
@@ -102,17 +102,17 @@ const StopwatchDisplay = () => {
       </div>
 
       {/* Laps Table */}
-      <div className="w-[500px] border-l border-[#3A3F4B] p-8 overflow-hidden">
+      <div className="w-full lg:w-[500px] lg:border-l border-[#3A3F4B] p-4 lg:p-8 overflow-hidden">
         <div className="flex justify-between text-sm text-gray-400 mb-4 px-4">
           <span>OVERALL</span>
           <span>LAP TIME</span>
           <span>LAP</span>
         </div>
-        <div className="space-y-4 h-[calc(100vh-220px)] overflow-y-auto custom-scrollbar">
+        <div className="flex flex-wrap lg:flex-col gap-4 lg:gap-0 lg:space-y-4 h-[200px] lg:h-[calc(100vh-220px)] overflow-y-auto custom-scrollbar">
           {laps.map((lap) => (
             <div
               key={lap.lapNumber}
-              className="flex justify-between items-center text-lg px-4"
+              className="flex justify-between items-center text-lg px-4 w-full lg:w-auto bg-[#3A3F4B] lg:bg-transparent rounded-lg lg:rounded-none p-3 lg:p-0"
             >
               <span className="font-light">{formatTime(lap.overall)}</span>
               <span className="font-light">{formatTime(lap.lap)}</span>

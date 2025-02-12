@@ -1,14 +1,17 @@
 import { Suspense } from "react";
-import { Routes, Route, useRoutes } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "@/components/home";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 function App() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Routes>
-        <Route path="/*" element={<Home />} />
-      </Routes>
-    </Suspense>
+    <TooltipProvider>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/*" element={<Home />} />
+        </Routes>
+      </Suspense>
+    </TooltipProvider>
   );
 }
 
