@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
+
 import { Play, Pause, RotateCcw, Plus, Minus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { trackTimerCompletion } from "@/lib/activity";
@@ -81,7 +82,7 @@ const TimerDisplay = ({
   return (
     <div className="flex flex-col items-center justify-center h-[calc(100vh-80px)] w-full bg-[#2A2E37] text-white relative">
       {/* Timer Display */}
-      <div className="flex justify-center -mt-10 h-[300px]">
+      <div className="flex justify-center -mt-10 h-[300px] relative">
         {/* Timer Text */}
         <AnimatePresence mode="popLayout">
           {formatTime(timeLeft)

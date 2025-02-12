@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Tempo Activity Tracker",
+  "version": "1.0",
+  "description": "Track browser activity for Tempo productivity app",
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "storage",
+    "idle",
+    "webNavigation"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [{
+    "matches": ["*://*.tempolabs.ai/*"],
+    "js": ["content.js"]
+  }],
+  "host_permissions": [
+    "*://*.tempolabs.ai/*"
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "tempo-tracker@tempolabs.ai"
+    }
+  }
+}

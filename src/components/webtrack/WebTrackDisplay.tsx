@@ -15,6 +15,8 @@ import {
   BarChart,
   History,
   Timer,
+  Layout,
+  Globe,
 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -30,6 +32,7 @@ import { UserAvatar } from "@/components/auth/UserAvatar";
 import { useAuthStore } from "@/lib/auth";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/lib/supabase";
+import { browserExtension } from "@/lib/browserExtension";
 
 const WebTrackDisplay = ({ defaultTab = "summary" }) => {
   const { user } = useAuthStore();
@@ -38,6 +41,18 @@ const WebTrackDisplay = ({ defaultTab = "summary" }) => {
   const [hasData, setHasData] = useState(false);
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [extensionStatus, setExtensionStatus] = useState<
+    "connected" | "disconnected"
+  >("disconnected");
+
+  // Try to connect to the browser extension
+  useEffect(() => {
+    const connectExtension = async () => {
+      const isConnected = await browserExtension.connectToExtension();
+      setExtensionStatus(isConnected ? "connected" : "disconnected");
+    };
+    connectExtension();
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -151,6 +166,18 @@ const WebTrackDisplay = ({ defaultTab = "summary" }) => {
             </PopoverContent>
           </Popover>
         </div>
+
+        {/* Extension Status */}
+        <div className="flex items-center gap-2">
+          <div
+            className={`w-2 h-2 rounded-full ${extensionStatus === "connected" ? "bg-green-500" : "bg-red-500"}`}
+          />
+          <span className="text-sm text-gray-400">
+            {extensionStatus === "connected"
+              ? "Extension Connected"
+              : "Extension Not Found"}
+          </span>
+        </div>
       </div>
 
       <div className="flex gap-6">
@@ -168,7 +195,11 @@ const WebTrackDisplay = ({ defaultTab = "summary" }) => {
               <div className="col-span-3">
                 <EmptyState
                   title="No analytics data available"
-                  description="Your productivity metrics will appear here once you start using the browser extension."
+                  description={
+                    extensionStatus === "connected"
+                      ? "Your productivity metrics will appear here once you start browsing."
+                      : "Please install and enable the browser extension to start tracking."
+                  }
                 />
               </div>
             ) : (
@@ -189,80 +220,72 @@ const WebTrackDisplay = ({ defaultTab = "summary" }) => {
               <TabsList className="grid w-full grid-cols-4 bg-[#2A2E37]">
                 <TabsTrigger
                   value="summary"
-                  className="text-white data-[state=active]:bg-[#4A4F5B]"
+                  className="text-white data-[state=active]:bg-[#7B89F4]"
                 >
                   Summary
                 </TabsTrigger>
                 <TabsTrigger
                   value="apps"
-                  className="text-white data-[state=active]:bg-[#4A4F5B]"
+                  className="text-white data-[state=active]:bg-[#7B89F4]"
                 >
                   Apps
                 </TabsTrigger>
                 <TabsTrigger
                   value="windows"
-                  className="text-white data-[state=active]:bg-[#4A4F5B]"
+                  className="text-white data-[state=active]:bg-[#7B89F4]"
                 >
                   Windows
                 </TabsTrigger>
                 <TabsTrigger
                   value="domains"
-                  className="text-white data-[state=active]:bg-[#4A4F5B]"
+                  className="text-white data-[state=active]:bg-[#7B89F4]"
                 >
                   Domains
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="summary">
-                {!hasData ? (
-                  <div className="mt-6 bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
-                    <EmptyState
-                      title="No summary data"
-                      description="Your summary statistics will appear here once tracking begins."
-                    />
-                  </div>
-                ) : (
-                  <div>Summary content will go here</div>
-                )}
+              <TabsContent value="summary" className="mt-4">
+                <div className="bg-[#7B89F4] text-white p-6 rounded-md flex flex-col items-center justify-center min-h-[200px]">
+                  <BarChart className="w-12 h-12 mb-4 opacity-50" />
+                  <p className="text-lg font-medium mb-2">
+                    No summary data available
+                  </p>
+                  <p className="text-sm opacity-70">
+                    Your activity summary will appear here once tracking begins
+                  </p>
+                </div>
               </TabsContent>
 
-              <TabsContent value="apps">
-                {!hasData ? (
-                  <div className="mt-6 bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
-                    <EmptyState
-                      title="No apps data"
-                      description="Your app statistics will appear here once tracking begins."
-                    />
-                  </div>
-                ) : (
-                  <div>Apps content will go here</div>
-                )}
+              <TabsContent value="apps" className="mt-4">
+                <div className="bg-[#7B89F4] text-white p-6 rounded-md flex flex-col items-center justify-center min-h-[200px]">
+                  <Laptop className="w-12 h-12 mb-4 opacity-50" />
+                  <p className="text-lg font-medium mb-2">
+                    No application data
+                  </p>
+                  <p className="text-sm opacity-70">
+                    Your app usage statistics will appear here
+                  </p>
+                </div>
               </TabsContent>
 
-              <TabsContent value="windows">
-                {!hasData ? (
-                  <div className="mt-6 bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
-                    <EmptyState
-                      title="No windows data"
-                      description="Your window statistics will appear here once tracking begins."
-                    />
-                  </div>
-                ) : (
-                  <div>Windows content will go here</div>
-                )}
+              <TabsContent value="windows" className="mt-4">
+                <div className="bg-[#7B89F4] text-white p-6 rounded-md flex flex-col items-center justify-center min-h-[200px]">
+                  <Layout className="w-12 h-12 mb-4 opacity-50" />
+                  <p className="text-lg font-medium mb-2">No window data</p>
+                  <p className="text-sm opacity-70">
+                    Your window activity will appear here
+                  </p>
+                </div>
               </TabsContent>
 
-              <TabsContent value="domains">
-                {!hasData ? (
-                  <div className="mt-6 bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
-                    <EmptyState
-                      title="No domains data"
-                      description="Your domain statistics will appear here once tracking begins."
-                    />
-                  </div>
-                ) : (
-                  <div>Domains content will go here</div>
-                )}
+              <TabsContent value="domains" className="mt-4">
+                <div className="bg-[#7B89F4] text-white p-6 rounded-md flex flex-col items-center justify-center min-h-[200px]">
+                  <Globe className="w-12 h-12 mb-4 opacity-50" />
+                  <p className="text-lg font-medium mb-2">No domain data</p>
+                  <p className="text-sm opacity-70">
+                    Your browsing activity will appear here
+                  </p>
+                </div>
               </TabsContent>
             </Tabs>
 
@@ -272,12 +295,10 @@ const WebTrackDisplay = ({ defaultTab = "summary" }) => {
                 Recommended Focus Sessions
               </h3>
               {!hasData ? (
-                <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
-                  <EmptyState
-                    title="No recommendations yet"
-                    description="Focus session recommendations will appear here based on your activity patterns."
-                  />
-                </div>
+                <EmptyState
+                  title="No recommendations yet"
+                  description="Focus session recommendations will appear here based on your activity patterns."
+                />
               ) : (
                 <div>Recommendations will go here</div>
               )}
@@ -287,12 +308,10 @@ const WebTrackDisplay = ({ defaultTab = "summary" }) => {
             <div className="mt-6">
               <h3 className="text-lg font-medium mb-4">Today's Goals</h3>
               {!hasData ? (
-                <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
-                  <EmptyState
-                    title="No goals set"
-                    description="Your productivity goals and progress will appear here once you start setting targets."
-                  />
-                </div>
+                <EmptyState
+                  title="No goals set"
+                  description="Your productivity goals and progress will appear here once you start setting targets."
+                />
               ) : (
                 <div>Goals will go here</div>
               )}

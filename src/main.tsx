@@ -7,11 +7,9 @@ import "@/index.css";
 
 TempoDevtools.init();
 
-const basename = import.meta.env.BASE_URL;
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter basename={basename}>
+    <BrowserRouter>
       <App />
     </BrowserRouter>
   </React.StrictMode>,
