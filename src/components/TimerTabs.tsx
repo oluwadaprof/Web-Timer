@@ -17,13 +17,19 @@ import TimerDisplay from "./timer/TimerDisplay";
 import WorldClockDisplay from "./worldclock/WorldClockDisplay";
 import WebTrackDisplay from "./webtrack/WebTrackDisplay";
 import NatureDisplay from "./nature/NatureDisplay";
-import { Leaf } from "lucide-react";
+import { Leaf, Github, Twitter, Linkedin, Mail } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface TimerTabsProps {
   defaultTab?: string;
@@ -78,6 +84,14 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
                     <span className="hidden sm:inline">Stopwatch</span>
                   </TabsTrigger>
 
+                  <TabsTrigger
+                    value="nature"
+                    className="flex items-center gap-2 rounded-full px-4 sm:px-6 py-2 bg-[#3A3F4B] text-white hover:bg-[#4A4F5B] data-[state=active]:bg-[#7B89F4] data-[state=active]:hover:bg-[#8B99FF] data-[state=active]:w-full whitespace-nowrap"
+                  >
+                    <Leaf className="h-4 w-4" />
+                    <span className="hidden sm:inline">Nature</span>
+                  </TabsTrigger>
+
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -113,7 +127,7 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
                           disabled
                         >
                           <BarChart2 className="h-4 w-4" />
-                          <span className="hidden sm:inline">Web Track</span>
+                          <span className="hidden sm:inline">Web Trackr</span>
                         </TabsTrigger>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -129,14 +143,6 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-
-                  <TabsTrigger
-                    value="nature"
-                    className="flex items-center gap-2 rounded-full px-4 sm:px-6 py-2 bg-[#3A3F4B] text-white hover:bg-[#4A4F5B] data-[state=active]:bg-[#7B89F4] data-[state=active]:hover:bg-[#8B99FF] data-[state=active]:w-full whitespace-nowrap"
-                  >
-                    <Leaf className="h-4 w-4" />
-                    <span className="hidden sm:inline">Nature</span>
-                  </TabsTrigger>
                 </TabsList>
                 <Button
                   variant="ghost"
@@ -152,6 +158,75 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
               <div
                 className={`${isMenuOpen ? "lg:relative absolute right-4" : "relative"}`}
               >
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="relative h-8 w-8 rounded-full hover:bg-[#3A3F4B]"
+                    >
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src="https://avatars.githubusercontent.com/u/57744795?v=4" />
+                        <AvatarFallback>AI</AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-auto bg-[#2A2E37] border border-[#3A3F4B] p-2 -ml-[14rem]">
+                    <div className="flex justify-between space-x-4">
+                      <div className="flex flex-col items-center gap-2">
+                        <Avatar className="h-10 w-10 rounded-sm rotate-10">
+                          <AvatarImage src="https://avatars.githubusercontent.com/u/57744795?v=4" />
+                          <AvatarFallback>AI</AvatarFallback>
+                        </Avatar>
+                        <div className="grid grid-cols-2 gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-gray-400 hover:text-white hover:bg-[#3A3F4B]"
+                          >
+                            <Github className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-gray-400 hover:text-white hover:bg-[#3A3F4B]"
+                          >
+                            <Twitter className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-gray-400 hover:text-white hover:bg-[#3A3F4B]"
+                          >
+                            <Linkedin className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-gray-400 hover:text-white hover:bg-[#3A3F4B]"
+                          >
+                            <Mail className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="space-y-1 flex-1">
+                        <h4 className="text-xs w-12 text-gray-400 bg-[#3A3F4B] rounded-full px-1 pb-1">
+                          Author
+                        </h4>
+                        <h4 className="text-sm text-gray-400 pt-[4px]">
+                          Adeeko Tobiloba Israel
+                        </h4>
+                        <p className="text-sm text-gray-400 pt-.5">
+                          Frontend Engineer
+                        </p>
+                        <div className="flex items-center">
+                          <span className="text-sm text-gray-400 pt-.5">
+                            adeekotobiloba8@gmail.com
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
                 <Button
                   variant="ghost"
                   size="icon"

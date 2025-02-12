@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card } from "../ui/card";
 import { Slider } from "../ui/slider";
 import { Button } from "../ui/button";
+
 import {
   Cloud,
   Wind,
@@ -29,6 +30,7 @@ import {
   Snowflake,
   VolumeX,
   Volume2,
+  Maximize2,
 } from "lucide-react";
 
 interface Sound {
@@ -205,7 +207,7 @@ const NatureDisplay = () => {
   return (
     <div className="flex flex-col h-[calc(100vh-80px)] bg-[#2A2E37] text-white p-6">
       {/* Top Controls */}
-      <div className="flex justify-center items-center mb-8">
+      <div className="relative flex justify-center items-center mb-8">
         <Button
           variant="ghost"
           size="lg"
@@ -226,7 +228,7 @@ const NatureDisplay = () => {
           {sounds.map((sound) => (
             <Card
               key={sound.id}
-              className="bg-[#3A3F4B] border-0 p-6 flex flex-col justify-between min-h-[160px]"
+              className="bg-[#3A3F4B] border-0 p-6 flex flex-col justify-between min-h-[120px]"
             >
               <div className="space-y-6">
                 <div className="flex items-center justify-between gap-2">
