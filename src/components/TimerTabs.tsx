@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
-import { Maximize2, Timer, Clock, Bell, Globe } from "lucide-react";
+import { Maximize2, Timer, Clock, Bell, Globe, BarChart2 } from "lucide-react";
+import StopwatchDisplay from "./stopwatch/StopwatchDisplay";
 import { motion } from "framer-motion";
 import { Card } from "./ui/card";
 import TimerDisplay from "./timer/TimerDisplay";
 import WorldClockDisplay from "./worldclock/WorldClockDisplay";
+import WebTrackDisplay from "./webtrack/WebTrackDisplay";
 
 interface TimerTabsProps {
   defaultTab?: string;
@@ -78,6 +80,12 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
               >
                 <Globe className="h-4 w-4" /> World Clock
               </TabsTrigger>
+              <TabsTrigger
+                value="webtrack"
+                className="flex items-center gap-2 rounded-full px-6 py-2 bg-[#3A3F4B] text-white hover:bg-[#4A4F5B]"
+              >
+                <BarChart2 className="h-4 w-4" /> Web Track
+              </TabsTrigger>
             </TabsList>
             <Button
               variant="ghost"
@@ -102,11 +110,7 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
           </TabsContent>
 
           <TabsContent value="stopwatch" className="mt-4">
-            <div className="flex justify-center items-center h-[400px]">
-              <p className="text-muted-foreground">
-                Stopwatch functionality coming soon...
-              </p>
-            </div>
+            <StopwatchDisplay />
           </TabsContent>
 
           <TabsContent value="alarm" className="mt-4">
@@ -119,6 +123,10 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
 
           <TabsContent value="worldclock" className="mt-4">
             <WorldClockDisplay />
+          </TabsContent>
+
+          <TabsContent value="webtrack" className="mt-4">
+            <WebTrackDisplay />
           </TabsContent>
         </Tabs>
       </div>
