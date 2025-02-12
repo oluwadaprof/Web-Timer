@@ -25,8 +25,9 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { ActivityList } from "./components/ActivityList";
+import { ActivityTabs } from "./components/ActivityTabs";
 import { ActivityChart } from "./components/ActivityChart";
+import { TabContent } from "./components/TabContent";
 import { topApplications, topWindows, topDomains } from "./data/mockData";
 import type { WebTrackDisplayProps } from "./types";
 
@@ -289,37 +290,25 @@ const WebTrackDisplay = ({ defaultTab = "summary" }: WebTrackDisplayProps) => {
 
             <TabsContent value="summary" className="mt-6">
               <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
-                <h3 className="text-lg font-medium mb-4 text-slate-200">
-                  Top Applications
-                </h3>
-                <ActivityList data={topApplications} />
+                <TabContent title="Top Applications" data={topApplications} />
               </div>
             </TabsContent>
 
             <TabsContent value="apps" className="mt-6">
               <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
-                <h3 className="text-lg font-medium mb-4 text-slate-200">
-                  Applications
-                </h3>
-                <ActivityList data={topApplications} />
+                <TabContent title="Applications" data={topApplications} />
               </div>
             </TabsContent>
 
             <TabsContent value="windows" className="mt-6">
               <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
-                <h3 className="text-lg font-medium mb-4 text-slate-200">
-                  Window Titles
-                </h3>
-                <ActivityList data={topWindows} />
+                <TabContent title="Window Titles" data={topWindows} />
               </div>
             </TabsContent>
 
             <TabsContent value="domains" className="mt-6">
               <div className="bg-[#2A2E37]/50 rounded-xl p-6 border border-[#3A3F4B]/30">
-                <h3 className="text-lg font-medium mb-4 text-slate-200">
-                  Browser Domains
-                </h3>
-                <ActivityList data={topDomains} />
+                <TabContent title="Browser Domains" data={topDomains} />
               </div>
             </TabsContent>
           </Tabs>
