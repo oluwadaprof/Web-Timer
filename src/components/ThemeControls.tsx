@@ -34,19 +34,22 @@ const ThemeControls = () => {
           variant="ghost"
           size="icon"
           className="relative group rounded-full hover:opacity-80 transition-opacity"
-          style={{ backgroundColor: currentTheme.color }}
+          style={{
+            backgroundColor: currentTheme.color,
+            border: "2px solid rgba(255,255,255,0.2)",
+          }}
         >
           <div className="absolute inset-0 rounded-full bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-3 -ml-[10rem] bg-white rounded-xl border-none bg-[#4A4F5B] shadow-sm">
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-2">
           {themeColors.map((color) => (
             <Button
               key={color.name}
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-full p-0 relative group transition-transform hover:scale-110"
+              className="h-8 w-8 rounded-full p-0 relative group transition-transform hover:scale-110 hover:opacity-80"
               onClick={() => handleThemeChange(color)}
               style={{ backgroundColor: color.color }}
             >

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import {
-  Maximize2,
+  Maximize,
   Timer,
   Clock,
   Globe,
@@ -10,6 +10,7 @@ import {
   Menu,
   ChevronLeft,
   ChevronRight,
+  Minimize,
 } from "lucide-react";
 import { Badge } from "./ui/badge";
 import StopwatchDisplay from "./stopwatch/StopwatchDisplay";
@@ -40,6 +41,30 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [timeLeft, setTimeLeft] = useState(300);
   const [isMenuOpen, setIsMenuOpen] = useState(window.innerWidth >= 1024);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      } else if (document.exitFullscreen) {
+        await document.exitFullscreen();
+      }
+    } catch (err) {
+      console.error("Error attempting to toggle full-screen:", err);
+    }
+  };
 
   return (
     <div className="w-full h-screen bg-[#2A2E37] overflow-hidden">
@@ -232,16 +257,14 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:text-white hover:bg-[#3A3F4B]rounded-full"
-                  onClick={() => {
-                    if (!document.fullscreenElement) {
-                      document.documentElement.requestFullscreen();
-                    } else {
-                      document.exitFullscreen();
-                    }
-                  }}
+                  className="text-white hover:text-white hover:bg-[#3A3F4B] rounded-full"
+                  onClick={toggleFullscreen}
                 >
-                  <Maximize2 className="h-6 w-6" />
+                  {isFullscreen ? (
+                    <Minimize className="h-6 w-6" />
+                  ) : (
+                    <Maximize className="h-6 w-6" />
+                  )}
                 </Button>
               </div>
             </div>
