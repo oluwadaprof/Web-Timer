@@ -30,6 +30,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import ThemeControls from "./ThemeControls";
 
 interface TimerTabsProps {
   defaultTab?: string;
@@ -70,7 +71,7 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
                 >
                   <TabsTrigger
                     value="timer"
-                    className={`flex items-center gap-2 rounded-full px-4 sm:px-6 py-2 ${timeLeft < 60 && timeLeft > 0 ? "bg-red-500 hover:bg-red-600" : "bg-[#3A3F4B] hover:bg-[#4A4F5B] data-[state=active]:bg-[#7B89F4] data-[state=active]:hover:bg-[#8B99FF]"} text-white whitespace-nowrap data-[state=active]:w-full`}
+                    className={`flex items-center gap-2 rounded-full px-4 sm:px-6 py-2 ${timeLeft < 60 && timeLeft > 0 ? "bg-red-500 hover:bg-red-600" : "bg-[#3A3F4B] hover:bg-[#4A4F5B] data-[state=active]:bg-[var(--theme-accent)] data-[state=active]:hover:opacity-80"} text-white whitespace-nowrap data-[state=active]:w-full`}
                   >
                     <Timer className="h-4 w-4" />
                     <span className="hidden sm:inline">Timer</span>
@@ -78,7 +79,7 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
 
                   <TabsTrigger
                     value="stopwatch"
-                    className="flex items-center gap-2 rounded-full px-4 sm:px-6 py-2 bg-[#3A3F4B] text-white hover:bg-[#4A4F5B] data-[state=active]:bg-[#7B89F4] data-[state=active]:hover:bg-[#8B99FF] data-[state=active]:w-full whitespace-nowrap"
+                    className="flex items-center gap-2 rounded-full px-4 sm:px-6 py-2 bg-[#3A3F4B] text-white hover:bg-[#4A4F5B] data-[state=active]:bg-[var(--theme-accent)] data-[state=active]:hover:opacity-80 data-[state=active]:w-full whitespace-nowrap"
                   >
                     <Clock className="h-4 w-4" />
                     <span className="hidden sm:inline">Stopwatch</span>
@@ -86,7 +87,7 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
 
                   <TabsTrigger
                     value="nature"
-                    className="flex items-center gap-2 rounded-full px-4 sm:px-6 py-2 bg-[#3A3F4B] text-white hover:bg-[#4A4F5B] data-[state=active]:bg-[#7B89F4] data-[state=active]:hover:bg-[#8B99FF] data-[state=active]:w-full whitespace-nowrap"
+                    className="flex items-center gap-2 rounded-full px-4 sm:px-6 py-2 bg-[#3A3F4B] text-white hover:bg-[#4A4F5B] data-[state=active]:bg-[var(--theme-accent)] data-[state=active]:hover:opacity-80 data-[state=active]:w-full whitespace-nowrap"
                   >
                     <Leaf className="h-4 w-4" />
                     <span className="hidden sm:inline">Nature</span>
@@ -156,8 +157,9 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
               </div>
 
               <div
-                className={`${isMenuOpen ? "lg:relative absolute right-4" : "relative"}`}
+                className={`${isMenuOpen ? "lg:relative absolute flex items-center gap-2 right-4 ml-2" : "relative flex items-center gap-2 ml-2"}`}
               >
+                <ThemeControls />
                 <HoverCard>
                   <HoverCardTrigger asChild>
                     <Button
@@ -230,7 +232,7 @@ const TimerTabs = ({ defaultTab = "timer" }: TimerTabsProps) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white hover:bg-[#3A3F4B]"
+                  className="text-white hover:text-white hover:bg-[#3A3F4B]rounded-full"
                   onClick={() => {
                     if (!document.fullscreenElement) {
                       document.documentElement.requestFullscreen();

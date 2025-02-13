@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "../ui/card";
 import { Slider } from "../ui/slider";
 import { Button } from "../ui/button";
@@ -27,11 +27,9 @@ import {
   Heart,
   Leaf,
   Mountain,
-  Snowflake,
-  VolumeX,
-  Volume2,
-  Maximize2,
 } from "lucide-react";
+
+import { natureSounds, SoundPlayer } from "@/lib/sounds";
 
 interface Sound {
   id: string;
@@ -39,8 +37,8 @@ interface Sound {
   icon: React.ReactNode;
   volume: number;
   url: string;
-  isMuted?: boolean;
-  audio?: HTMLAudioElement;
+  isPlaying?: boolean;
+  player?: SoundPlayer;
 }
 
 const NatureDisplay = () => {
@@ -51,213 +49,213 @@ const NatureDisplay = () => {
       name: "Rain",
       icon: <CloudRain className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/rain.mp3",
+      url: natureSounds.rain,
     },
     {
       id: "thunder",
       name: "Thunder",
       icon: <CloudLightning className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/thunder.mp3",
+      url: natureSounds.thunder,
     },
     {
       id: "drizzle",
       name: "Drizzle",
       icon: <CloudDrizzle className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/drizzle.mp3",
+      url: natureSounds.drizzle,
     },
     {
       id: "snow",
       name: "Snow",
       icon: <CloudSnow className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/snow.mp3",
+      url: natureSounds.snow,
     },
     {
       id: "wind",
       name: "Wind",
       icon: <Wind className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/wind.mp3",
+      url: natureSounds.wind,
     },
     {
       id: "forest",
       name: "Forest",
       icon: <Trees className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/forest.mp3",
+      url: natureSounds.forest,
     },
     {
       id: "waves",
       name: "Ocean",
       icon: <Waves className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/waves.mp3",
+      url: natureSounds.waves,
     },
     {
       id: "stream",
       name: "Stream",
       icon: <Droplets className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/stream.mp3",
+      url: natureSounds.stream,
     },
     {
       id: "night",
       name: "Night",
       icon: <Moon className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/night.mp3",
+      url: natureSounds.night,
     },
     {
       id: "birds",
       name: "Birds",
       icon: <Bird className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/birds.mp3",
+      url: natureSounds.birds,
     },
     {
       id: "sunrise",
       name: "Sunrise",
       icon: <Sunrise className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/sunrise.mp3",
+      url: natureSounds.sunrise,
     },
     {
       id: "sunset",
       name: "Sunset",
       icon: <Sunset className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/sunset.mp3",
+      url: natureSounds.sunset,
     },
     {
       id: "cafe",
       name: "Café",
       icon: <Coffee className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/cafe.mp3",
+      url: natureSounds.cafe,
     },
     {
       id: "piano",
       name: "Piano",
       icon: <Music className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/piano.mp3",
+      url: natureSounds.piano,
     },
     {
       id: "fireplace",
       name: "Fireplace",
       icon: <Flame className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/fireplace.mp3",
+      url: natureSounds.fireplace,
     },
     {
       id: "fan",
       name: "Fan",
       icon: <Fan className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/fan.mp3",
+      url: natureSounds.fan,
     },
     {
       id: "rain_umbrella",
       name: "Rain on Umbrella",
       icon: <Umbrella className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/rain_umbrella.mp3",
+      url: natureSounds.rain_umbrella,
     },
     {
       id: "heartbeat",
       name: "Heartbeat",
       icon: <Heart className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/heartbeat.mp3",
+      url: natureSounds.heartbeat,
     },
     {
       id: "leaves",
       name: "Leaves",
       icon: <Leaf className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/leaves.mp3",
+      url: natureSounds.leaves,
     },
     {
       id: "mountain",
       name: "Mountain Wind",
       icon: <Mountain className="w-5 h-5 text-white" />,
       volume: 50,
-      url: "https://cdn.example.com/mountain.mp3",
+      url: natureSounds.mountain,
     },
   ]);
 
+  useEffect(() => {
+    // Initialize sound players
+    setSounds(
+      sounds.map((sound) => ({
+        ...sound,
+        player: new SoundPlayer(sound.url),
+      })),
+    );
+
+    // Cleanup on unmount
+    return () => {
+      sounds.forEach((sound) => sound.player?.cleanup());
+    };
+  }, []);
+
   const handleVolumeChange = (id: string, newVolume: number) => {
     setSounds(
-      sounds.map((sound) =>
-        sound.id === id ? { ...sound, volume: newVolume } : sound,
-      ),
+      sounds.map((sound) => {
+        if (sound.id === id) {
+          sound.player?.setVolume(newVolume);
+          return { ...sound, volume: newVolume };
+        }
+        return sound;
+      }),
     );
   };
 
-  const toggleMute = (id: string) => {
+  const toggleSound = (id: string) => {
     setSounds(
-      sounds.map((sound) =>
-        sound.id === id ? { ...sound, isMuted: !sound.isMuted } : sound,
-      ),
+      sounds.map((sound) => {
+        if (sound.id === id) {
+          const newIsPlaying = !sound.isPlaying;
+          if (newIsPlaying) {
+            sound.player?.play();
+          } else {
+            sound.player?.pause();
+          }
+          return { ...sound, isPlaying: newIsPlaying };
+        }
+        return sound;
+      }),
     );
   };
 
   return (
     <div className="flex flex-col h-[calc(100vh-80px)] bg-[#2A2E37] text-white p-6">
-      {/* Top Controls */}
-      <div className="relative flex justify-center items-center mb-8">
-        <Button
-          variant="ghost"
-          size="lg"
-          className={`w-16 h-16 rounded-full ${isPlaying ? "bg-[#7B89F4] hover:bg-[#8B99FF]" : "bg-[#3A3F4B] hover:bg-[#4A4F5B]"}`}
-          onClick={() => setIsPlaying(!isPlaying)}
-        >
-          {isPlaying ? (
-            <Pause className="w-6 h-6 text-white" />
-          ) : (
-            <Play className="w-6 h-6 text-white" />
-          )}
-        </Button>
-      </div>
-
       {/* Sound Grid */}
       <div className="container mx-auto max-w-5xl">
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 max-h-[calc(100vh-180px)] overflow-y-auto custom-scrollbar py-2">
           {sounds.map((sound) => (
             <Card
               key={sound.id}
-              className="bg-[#3A3F4B] border-0 p-6 flex flex-col justify-between min-h-[120px]"
+              className={`bg-[#3A3F4B] p-6 flex flex-col justify-between min-h-[120px] cursor-pointer transition-all duration-200 hover:bg-[#4A4F5B] ${sound.isPlaying ? "border-2 border-[var(--theme-accent)]" : "border-0"}`}
+              onClick={() => toggleSound(sound.id)}
             >
               <div className="space-y-6">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    {sound.icon}
-                    <span className="text-sm text-white">{sound.name}</span>
-                  </div>
-                  <button
-                    className={`p-1 rounded-full hover:bg-[#4A4F5B] transition-colors ${sound.isMuted ? "text-red-400" : "text-white"}`}
-                    onClick={() => toggleMute(sound.id)}
-                  >
-                    {sound.isMuted ? (
-                      <VolumeX className="w-4 h-4" />
-                    ) : (
-                      <Volume2 className="w-4 h-4" />
-                    )}
-                  </button>
+                <div className="flex items-center gap-2">
+                  {sound.icon}
+                  <span className="text-sm text-white">{sound.name}</span>
                 </div>
               </div>
               <div>
                 <Slider
-                  value={[sound.isMuted ? 0 : sound.volume]}
+                  value={[sound.volume]}
                   max={100}
                   step={1}
                   className="w-full"
                   onValueChange={(value) =>
                     handleVolumeChange(sound.id, value[0])
                   }
-                  disabled={sound.isMuted}
                 />
               </div>
             </Card>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Square, Pause, Play } from "lucide-react";
+import { Square, Pause, Play, RotateCcw } from "lucide-react";
 
 interface Lap {
   overall: number;
@@ -63,52 +63,65 @@ const StopwatchDisplay = () => {
       {/* Main Stopwatch Display */}
       <div className="flex-1 flex flex-col items-center justify-center p-8">
         <h2 className="text-2xl mb-4 tracking-wider">STOPWATCH</h2>
-        <div className="text-[120px] font-light tracking-wider mb-8">
+        <div className="text-[80px] sm:text-[120px] md:text-[160px] lg:text-[200px] font-light tracking-wider mb-8">
           {formatTime(time)}
         </div>
         <div className="text-purple-400 text-lg mb-12">
           {isRunning ? "Active now" : "Stopped"}
         </div>
-        <div className="flex gap-8">
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-8">
           <Button
             variant="ghost"
             size="icon"
-            className="w-16 h-16 rounded-full bg-[#3A3F4B] hover:bg-[#4A4F5B]"
+            className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#3A3F4B] hover:bg-[#4A4F5B]"
             onClick={handleReset}
           >
-            <Square className="h-6 w-6" />
+            <RotateCcw className="h-5 w-5 sm:h-6 sm:w-6" />
           </Button>
           <Button
             size="icon"
-            className="w-16 h-16 rounded-full bg-purple-500 hover:bg-purple-600"
+            className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[var(--theme-accent)] hover:bg-[var(--theme-accent-hover)] transition-colors"
             onClick={handleStartStop}
           >
             {isRunning ? (
-              <Pause className="h-6 w-6" />
+              <Pause className="h-5 w-5 sm:h-6 sm:w-6" />
             ) : (
-              <Play className="h-6 w-6" />
+              <Play className="h-5 w-5 sm:h-6 sm:w-6" />
             )}
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            className="w-16 h-16 rounded-full bg-[#3A3F4B] hover:bg-[#4A4F5B]"
+            className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#3A3F4B] hover:bg-[#4A4F5B]"
             onClick={handleLap}
             disabled={!isRunning}
           >
-            LAP
+            <span className="text-sm sm:text-base">LAP</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#3A3F4B] hover:bg-[#4A4F5B]"
+            onClick={() => {
+              setTime(0);
+              setLaps([]);
+              setLastLapTime(0);
+              setIsRunning(false);
+            }}
+          >
+            <Square className="h-5 w-5 sm:h-6 sm:w-6" />
           </Button>
         </div>
       </div>
 
       {/* Laps Table */}
-      <div className="w-full lg:w-[500px] lg:border-l border-[#3A3F4B] p-4 lg:p-8 overflow-hidden">
+      <div className="w-full lg:w-[500px] lg:border-l border-[#3A3F4B] p-4 lg:p-8 overflow-hidden mt-8 lg:mt-0">
         <div className="flex justify-between text-sm text-gray-400 mb-4 px-4">
           <span>OVERALL</span>
           <span>LAP TIME</span>
           <span>LAP</span>
         </div>
-        <div className="flex flex-wrap lg:flex-col gap-4 lg:gap-0 lg:space-y-4 h-[200px] lg:h-[calc(100vh-220px)] overflow-y-auto custom-scrollbar">
+        <div className="flex flex-col gap-2 h-[200px] lg:h-[calc(100vh-220px)] overflow-y-auto custom-scrollbar">
           {laps.map((lap) => (
             <div
               key={lap.lapNumber}

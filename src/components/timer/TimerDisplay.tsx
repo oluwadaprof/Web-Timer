@@ -139,7 +139,7 @@ const TimerDisplay = ({
       <div className="flex justify-center w-full px-6">
         {timeLeft === 0 ? (
           <Button
-            className="w-full max-w-[600px] h-14 bg-[#7B89F4] hover:bg-[#8B99FF] text-white gap-2 rounded-full text-lg font-medium"
+            className="w-full max-w-[600px] h-14 bg-[var(--theme-accent)] hover:bg-[var(--theme-accent-hover)] text-white gap-2 rounded-full text-lg font-medium transition-colors"
             onClick={handleReset}
           >
             <RotateCcw className="h-5 w-5" />
@@ -147,7 +147,7 @@ const TimerDisplay = ({
           </Button>
         ) : (
           <Button
-            className="w-full max-w-[600px] h-14 bg-[#7B89F4] hover:bg-[#8B99FF] text-white gap-2 rounded-full text-lg font-medium"
+            className="w-full max-w-[600px] h-14 bg-[var(--theme-accent)] hover:bg-[var(--theme-accent-hover)] text-white gap-2 rounded-full text-lg font-medium transition-colors"
             onClick={() => setIsRunning(!isRunning)}
           >
             {isRunning ? (
@@ -168,7 +168,7 @@ const TimerDisplay = ({
       {/* Progress Bar */}
       <div className="absolute bottom-0 left-0 right-0">
         <div
-          className={`h-2 rounded-full transition-all duration-300 ease-in-out ${timeLeft < 60 ? "bg-red-500" : "bg-[#7B89F4]"}`}
+          className={`h-2 rounded-full transition-all duration-300 ease-in-out ${timeLeft < 60 ? "bg-red-500" : "bg-[var(--theme-accent)]"}`}
           style={{
             width: `${progress}%`,
             opacity: isRunning ? 1 : 0.5,
