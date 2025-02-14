@@ -233,8 +233,8 @@ const NatureDisplay = () => {
   return (
     <div className="flex flex-col h-[calc(100vh-80px)] bg-[#2A2E37] text-white p-6">
       {/* Sound Grid */}
-      <div className="container mx-auto max-w-5xl">
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 max-h-[calc(100vh-180px)] overflow-y-auto custom-scrollbar py-2">
+      <div className="container mx-auto px-2 mt-14 max-w-5xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 max-h-[calc(100vh-105px)] overflow-y-auto custom-scrollbar py-2">
           {sounds.map((sound) => (
             <Card
               key={sound.id}
