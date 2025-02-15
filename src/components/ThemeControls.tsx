@@ -33,7 +33,7 @@ const ThemeControls = () => {
         <Button
           variant="ghost"
           size="icon"
-          className="relative group rounded-full hover:opacity-80 transition-opacity"
+          className="relative group h-8 w-8 rounded-full hover:opacity-80 transition-opacity"
           style={{
             backgroundColor: currentTheme.color,
             border: "2px solid rgba(255,255,255,0.2)",
