@@ -188,16 +188,24 @@ const NatureDisplay = () => {
 
   useEffect(() => {
     // Initialize sound players
+    const players = new Map();
+
+    sounds.forEach((sound) => {
+      const player = new SoundPlayer(sound.url);
+      players.set(sound.id, player);
+    });
+
     setSounds(
       sounds.map((sound) => ({
         ...sound,
-        player: new SoundPlayer(sound.url),
+        player: players.get(sound.id),
+        isPlaying: false,
       })),
     );
 
     // Cleanup on unmount
     return () => {
-      sounds.forEach((sound) => sound.player?.cleanup());
+      players.forEach((player) => player.cleanup());
     };
   }, []);
 
@@ -213,21 +221,27 @@ const NatureDisplay = () => {
     );
   };
 
-  const toggleSound = (id: string) => {
-    setSounds(
-      sounds.map((sound) => {
-        if (sound.id === id) {
-          const newIsPlaying = !sound.isPlaying;
-          if (newIsPlaying) {
-            sound.player?.play();
-          } else {
-            sound.player?.pause();
-          }
-          return { ...sound, isPlaying: newIsPlaying };
-        }
-        return sound;
-      }),
-    );
+  const toggleSound = async (id: string) => {
+    const soundToToggle = sounds.find((s) => s.id === id);
+    if (!soundToToggle || !soundToToggle.player) return;
+
+    const newIsPlaying = !soundToToggle.isPlaying;
+
+    try {
+      if (newIsPlaying) {
+        await soundToToggle.player.play();
+      } else {
+        soundToToggle.player.pause();
+      }
+
+      setSounds(
+        sounds.map((sound) =>
+          sound.id === id ? { ...sound, isPlaying: newIsPlaying } : sound,
+        ),
+      );
+    } catch (error) {
+      console.error(`Error toggling sound ${id}:`, error);
+    }
   };
 
   return (

@@ -5,7 +5,9 @@ import { TempoDevtools } from "tempo-devtools";
 import App from "@/App";
 import "@/index.css";
 
-TempoDevtools.init();
+if (import.meta.env.VITE_TEMPO) {
+  TempoDevtools.init();
+}
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

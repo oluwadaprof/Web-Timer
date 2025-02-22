@@ -40,38 +40,91 @@ export class SoundPlayer {
   private audio: HTMLAudioElement;
   private volume: number = 50;
   private isMuted: boolean = false;
+  private isLoaded: boolean = false;
 
   constructor(url: string) {
-    this.audio = new Audio(url);
+    this.audio = new Audio();
+    this.audio.src = url;
     this.audio.loop = true;
+    this.audio.preload = "auto";
+
+    // Set initial volume
+    this.audio.volume = this.volume / 100;
+
+    // Handle loading
+    this.audio.addEventListener("loadeddata", () => {
+      this.isLoaded = true;
+      console.log("Sound loaded:", url);
+    });
+
+    this.audio.addEventListener("error", (e) => {
+      console.error("Error loading sound:", url, e);
+    });
   }
 
-  play() {
-    if (!this.isMuted) {
-      this.audio.play();
+  async play() {
+    if (this.isMuted) return;
+
+    try {
+      // Reset the audio if it's ended
+      if (this.audio.ended) {
+        this.audio.currentTime = 0;
+      }
+
+      // Set volume before playing
+      this.audio.volume = this.volume / 100;
+
+      // Play the audio
+      await this.audio.play();
+      console.log("Playing sound");
+    } catch (error) {
+      console.error("Error playing sound:", error);
+      // Try to recover by creating a new audio instance
+      const currentSrc = this.audio.src;
+      this.audio = new Audio(currentSrc);
+      this.audio.loop = true;
+      this.audio.volume = this.volume / 100;
+      try {
+        await this.audio.play();
+      } catch (retryError) {
+        console.error("Retry failed:", retryError);
+      }
     }
   }
 
   pause() {
-    this.audio.pause();
+    try {
+      this.audio.pause();
+    } catch (error) {
+      console.error("Error pausing sound:", error);
+    }
   }
 
   setVolume(value: number) {
     this.volume = value;
-    this.audio.volume = value / 100;
+    try {
+      this.audio.volume = value / 100;
+    } catch (error) {
+      console.error("Error setting volume:", error);
+    }
   }
 
   toggleMute() {
     this.isMuted = !this.isMuted;
     if (this.isMuted) {
-      this.audio.pause();
+      this.pause();
     } else if (this.volume > 0) {
-      this.audio.play();
+      this.play();
     }
   }
 
   cleanup() {
-    this.audio.pause();
-    this.audio.src = "";
+    try {
+      this.pause();
+      this.audio.src = "";
+      this.audio.remove();
+    } catch (error) {
+      console.error("Error cleaning up sound:", error);
+    }
   }
 }

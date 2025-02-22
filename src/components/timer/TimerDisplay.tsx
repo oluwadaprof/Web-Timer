@@ -68,7 +68,7 @@ const TimerDisplay = ({
   return (
     <div className="flex flex-col items-center justify-center h-[calc(100vh-80px)] w-full bg-[#2A2E37] text-white relative px-4">
       {/* Timer Display */}
-      <div className="flex justify-center -mt-10 h-[300px] relative">
+      <div className="flex justify-center sm:mt-40 -mt-10 h-[300px] relative">
         {/* Timer Text */}
         <AnimatePresence mode="popLayout">
           {formatTime(timeLeft)
